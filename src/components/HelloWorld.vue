@@ -27,16 +27,27 @@
       <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
     </ul>
+      <button type="submit" @click="toHome">Click</button>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  import {axiosConfig} from "../common/axios_common";
+
+  export default {
+    name: 'HelloWorld',
+    props: {
+      msg: String
+    },
+    methods: {
+      toHome() {
+        this.$http.get("http://localhost:8080/home", axiosConfig)
+            .then(response => {
+                alert(response.data)
+            })
+      }
+    }
   }
-}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
