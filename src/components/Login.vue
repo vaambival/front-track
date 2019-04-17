@@ -48,7 +48,8 @@
                     this.$http.post(LOGIN_URL, {
                         username: this.input.username,
                         password: this.input.password
-                    }, { withCredentials: true, xhr: true}
+                    }, { withCredentials: true, xhr: true},
+                    this.$router.push('/Problem')
                     ).catch(error => {
                         if (error.response.status === 401) {
                             this.message = true;

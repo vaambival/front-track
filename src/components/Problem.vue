@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p class="name_problem">аваиваиваи</p>
+        <p class="name_problem">{{ prefix}} - {{ id }} {{ name }}</p>
         <div style="overflow-x:auto;">
             <table class="table1">
                 <tr>
@@ -41,11 +41,18 @@
 </template>
 
 <script>
+    import {axiosConfig} from "../common/axios_common";
+    import {
+        PROBLEM_URL
+    } from "@/constant/api";
 
     export default {
         name: "Problem",
         data() {
             return {
+                prefix: "",
+                id: 0,
+                name: "",
                 options: [
                     {countryCode: "AU", countryName: "Australia"},
                     {countryCode: "CA", countryName: "Canada"},
@@ -58,6 +65,16 @@
                 ],
                 selected: {countryCode: "AU", countryName: "Australia"}
             }
+        },
+        mounted() {
+
+                this.$http.get(PROBLEM_URL + '/pop/1', axiosConfig)
+                    .then(response => {
+                        console.log(response);
+                        this.prefix = response.data.prefix
+                        this.id = response.data.id
+                        this.name = response.data.name
+                    })
         }
     }
 </script>
