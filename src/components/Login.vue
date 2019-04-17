@@ -4,6 +4,7 @@
             <h1>Авторизация</h1>
         </div>
         <form class="auth-body">
+            <p class="error" v-if="message">{{ messageText }}</p>
             <div>
                 <label for="login">Имя пользователя</label>
                 <input id="login-field" v-model="input.username" required autofocus>
@@ -32,6 +33,8 @@
         name: 'Login',
         data() {
             return {
+                message: false,
+                messageText: "",
                 input: {
                     username: "",
                     password: ""
@@ -46,9 +49,20 @@
                         username: this.input.username,
                         password: this.input.password
                     }, { withCredentials: true, xhr: true}
-                    ).catch(function(error) {
-                        alert(error.response)
+                    ).catch(error => {
+                        if (error.response.status === 401) {
+                            this.message = true;
+                            this.messageText = "Неверное имя пользователя или пароль";
+                        }
                     });
+                }
+                else {
+                    this.message = true;
+                    this.messageText = "Поле 'Пароль' не должно быть пустым";
+                }
+                if (this.input.username.length == 0) {
+                    this.message = true;
+                    this.messageText = "Поле 'Имя пользователя' не должно быть пустым";
                 }
             }
         }
@@ -122,5 +136,11 @@
         position: relative;
         vertical-align: middle;
         white-space: nowrap;
+    }
+    .error {
+        text-align: left;
+        color: #FF7373;
+        margin-bottom: 30px;
+        font-size: 14px;
     }
 </style>

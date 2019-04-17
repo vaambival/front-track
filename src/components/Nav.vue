@@ -1,8 +1,7 @@
 <template>
     <div>
-        <nav>
+        <nav v-if="this.$route.path !== '/login'">
             <router-link class="spacing" v-for="routes in links"
-
                          v-bind:key="routes.id"
                          :to="`${routes.page}`">{{routes.text}}</router-link>
         </nav>
