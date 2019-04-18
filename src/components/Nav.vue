@@ -4,6 +4,9 @@
             <router-link class="spacing" v-for="routes in links"
                          v-bind:key="routes.id"
                          :to="`${routes.page}`">{{routes.text}}</router-link>
+            <div class="find-prodlem-input">
+
+            </div>
         </nav>
     </div>
 </template>
