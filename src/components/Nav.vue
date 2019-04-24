@@ -4,9 +4,7 @@
             <router-link class="spacing" v-for="routes in links"
                          v-bind:key="routes.id"
                          :to="`${routes.page}`">{{routes.text}}</router-link>
-            <div class="find-prodlem-input">
-
-            </div>
+                <input class="find-prodlem-input" type="text" value="">
         </nav>
     </div>
 </template>
@@ -44,7 +42,7 @@
     nav a {
         padding: 14px 16px;
         text-decoration: none;
-        display: table-cell;
+        display: inline-block;
     }
     nav a:hover {
         background-color: #111;
@@ -52,5 +50,7 @@
     nav a.router-link-active {
         background-color: #FFA011;
     }
-
+    .find-prodlem-input {
+        float: right;
+    }
 </style>

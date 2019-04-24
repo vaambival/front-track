@@ -9,7 +9,8 @@ const LOGIN_URL = BASE_URL + '/' + LOGIN_PATH
 
 const PROBLEM_PATH = 'task'
 const USER_PATH = 'user'
-const PROBLEM_URL = BASE_URL + '/' + PROBLEM_PATH
+const PREFIX = 'pop'
+const PROBLEM_URL = BASE_URL + '/' + PROBLEM_PATH + '/' + PREFIX
 const USER_URL = BASE_URL + '/' + USER_PATH
 
 export{
