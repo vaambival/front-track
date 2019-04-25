@@ -1,7 +1,11 @@
 <template>
     <div>
-        <p class="name_problem">{{ prefix}} - {{ id }} {{ name }}</p>
-        <div style="min-height: 250px">
+        <p class="name_problem">
+            {{ prefix}} - {{ id }} {{ name }}
+            <v-select :reduce="st => st.stageName" label="stageName" :options="stage.options" class="stageSelect"
+                      v-model="stage.default" v-on:change="updateStage"/>
+        </p>
+        <div style="min-height: 200px">
             <table class="table1">
                 <tr>
                     <td>Источник</td>
@@ -21,13 +25,15 @@
                 <tr>
                     <td>Статус</td>
                     <td>
-                        <v-select :reduce="st => st.statusCode" label="statusName" :options="status.options" v-model="status.default" v-on:change="updateStatus"/>
+                        <v-select :reduce="st => st.statusCode" label="statusName" :options="status.options"
+                                  v-model="status.default" v-on:change="updateStatus"/>
                     </td>
                 </tr>
                 <tr>
                     <td>Исполнитель</td>
                     <td>
-                        <v-select :reduce="st => st.executorCode" label="executorName" :options="executor.options" v-model="executor.default" v-on:change="updateExecutor"/>
+                        <v-select :reduce="st => st.executorCode" label="executorName" :options="executor.options"
+                                  v-model="executor.default" v-on:change="updateExecutor"/>
                     </td>
                 </tr>
                 <tr>
@@ -63,6 +69,7 @@
             </ul>
             <div class="tabs-component-panels">
                 <section class="tabs-component-panel" v-show="tabActive">
+                    <p v-if="comment.length == 0" style="color: #ddd"> Комментариев нет </p>
                     <div v-for="item in comment">
                         <img src="../assets/user.png" class="userImg">
                         <h5 class="page-subtitle">{{ item.author.userName }} <span> {{ item.created }}</span></h5>
@@ -70,8 +77,23 @@
                     </div>
                 </section>
                 <section class="tabs-component-panel" v-show="!tabActive">
-                    <h2 class="page-subtitle">Second tab</h2>
-                        This is the content of the second tab.
+                    <div v-for="history in historyDtos">
+                        <img src="../assets/user.png" class="userImg">
+                        <h5 class="page-subtitle">{{ history.author.userName }} <span> {{ history.operationDate }}</span></h5>
+                        <p v-if="history.historyChange.oldName != null || history.historyChange.newName != null">
+                            <!--TODO: поменять название в строке выше-->
+                            <span style="font-weight: 600"> Название: </span>{{ history.historyChange.oldName }} <span class="arrow"></span>
+                            {{ history.historyChange.newName }}</p>
+                        <p v-if="history.historyChange.oldStatus != null || history.historyChange.newStatus != null">
+                            <span style="font-weight: 600"> Статус: </span>{{ getStatusName(history.historyChange.oldStatus) }} <span class="arrow"></span>
+                            {{ getStatusName(history.historyChange.newStatus) }}</p>
+                        <p v-if="history.historyChange.oldExecutor != null || history.historyChange.newExecutor != null">
+                            <span style="font-weight: 600"> Исполнитель: </span>{{ history.historyChange.oldExecutor == null ? "Не назначено" : history.historyChange.oldExecutor.userName }} <span class="arrow"></span>
+                            {{ history.historyChange.newExecutor == null ? "Не назначено" : history.historyChange.newExecutor.userName }}</p>
+                        <p v-if="history.historyChange.oldStage != null || history.historyChange.newStage != null">
+                            <span style="font-weight: 600"> Этапы: </span>{{ getStageName(history.historyChange.oldStage) }} <span class="arrow"></span>
+                            {{ getStageName(history.historyChange.newStage) }}</p>
+                    </div>
                 </section>
             </div>
         </div>
@@ -136,17 +158,28 @@
                 tabActive: true,
                 comment: [],
                 newComment: "Добавить комментарий...",
-                displayCommentEditor: false
+                displayCommentEditor: false,
+                historyDtos: [],
+                stage: {
+                    options: [
+                        {stageCode: "QUEUE", stageName: "В очереди"},
+                        {stageCode: "IN_WORK", stageName: "В работе"},
+                        {stageCode: "ON_ACCEPTANCE", stageName: "На приемке"},
+                        {stageCode: "COMPLETED", stageName: "Завершена"}
+                    ],
+                    default: ""
+                },
             }
         },
         mounted() {
-            this.$http.get(PROBLEM_URL + '/3', axiosConfig)
+            this.$http.get(PROBLEM_URL + '/1', axiosConfig)
                 .then(response => {
                     this.prefix = response.data.prefix
                     this.id = response.data.id
                     this.name = response.data.name
                     this.sourceType = response.data.sourceType
                     this.status.default = this.getStatusName(response.data.status)
+                    this.stage.default = this.getStageName(response.data.stage)
                     this.createdDate = response.data.createdDate
                     this.userName= response.data.author.userName
 
@@ -160,16 +193,17 @@
                     this.description = response.data.description
                     this.comment = response.data.comments
 
+                    this.historyDtos = response.data.historyDtos
+
                 }),
                 this.$http.get(USER_URL, axiosConfig)
                     .then(response => {
-                        console.log(response.data[0].userId)
                         for(var ex in response.data){
-                            console.log(response.data[ex].userId)
                             this.executor.options[ex].executorCode = response.data[ex].userId
                             this.executor.options[ex].executorName = response.data[ex].userName
                         }
-                        this.executor.options[ex].executorCode = response.data[ex].userId
+                        this.executor.options.push({ executorCode: 0, executorName: "Не назначено"})
+
                 })
         },
         methods: {
@@ -181,22 +215,46 @@
                 }
             },
 
+            getStageName(stageValue) {
+                for (var option in this.stage.options) {
+                    if (stageValue === this.stage.options[option].stageCode) {
+                        return this.stage.options[option].stageName
+                    }
+                }
+            },
+
             updateStatus() {
                 if (this.status.default.statusCode != null) {
-                    this.$http.patch(PROBLEM_URL + '/3', {
+                    this.$http.patch(PROBLEM_URL + '/1', {
                         status: this.status.default.statusCode
                     }, axiosConfig)
                         .then(response => {
+                            this.historyDtos = response.data.historyDtos
+                        })
+                }
+            },
+
+            updateStage() {
+                if (this.stage.default.stageCode != null) {
+                    this.$http.patch(PROBLEM_URL + '/1', {
+                        stage: this.stage.default.stageCode
+                    }, axiosConfig)
+                        .then(response => {
+                            console.log(response)
+                            this.historyDtos = response.data.historyDtos
                         })
                 }
             },
 
             updateExecutor() {
                 if (this.executor.default.executorCode != null) {
-                    this.$http.patch(PROBLEM_URL + '/3', {
-                        executor: this.executor.default.executorCode
+                    console.log(this.executor.default.executorCode)
+                    this.$http.patch(PROBLEM_URL + '/1', {
+                        userId: this.executor.default.executorCode
                     }, axiosConfig)
                         .then(response => {
+                            console.log(response)
+                            this.historyDtos = response.data.historyDtos
                         })
                 }
             },
@@ -209,10 +267,11 @@
 
             saveClick(){
                 var discriptionHtml = new DOMParser().parseFromString(this.description, 'text/html');
-                this.$http.patch(PROBLEM_URL + '/3', {
+                this.$http.patch(PROBLEM_URL + '/1', {
                     description: discriptionHtml.body.textContent
                 }, axiosConfig)
                     .then(response => {
+
                 })
                 this.displayEditor = false
                 this.displayText = true
@@ -240,7 +299,7 @@
 
             saveCommentClick(){
                 var commentHtml = new DOMParser().parseFromString(this.newComment, 'text/html');
-                this.$http.post(PROBLEM_URL + '/3/comment', {
+                this.$http.post(PROBLEM_URL + '/1/comment', {
                     text: commentHtml.body.textContent
                 }, axiosConfig)
                     .then(response => {
@@ -260,6 +319,9 @@
 </script>
 
 <style>
+    .arrow:before{
+        content: '\2192';
+    }
     .name_problem {
         display: block;
         text-align: left;
@@ -411,5 +473,11 @@
     .quillWrapper {
         border-radius: 0 0 6px 6px;
         box-shadow: 0 0 10px rgba(0, 0, 0, .05);
+    }
+    .stageSelect {
+        float: right;
+        min-width: 250px;
+        margin-top: -8px;
+        background-color: #FFF0D7;
     }
 </style>
