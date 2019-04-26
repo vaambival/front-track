@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div>
-                <button class="button-pr" type="submit" @click="handleSubmit">
+                <button class="button-pr-come" type="submit" @click="handleSubmit">
                     Войти
                 </button>
             </div>
@@ -104,24 +104,28 @@
         float: left;
         font-size: 14px;
     }
-    #login-field, #password-field{
-        display: block;
-        width: 95%;
-        background-color: #FFFFFF;
-        font-size: 14px;
-        margin-bottom: 40px;
 
-        border: 1px solid #d1d5da;
-        border-radius: 3px;
-        box-shadow: inset 0 1px 2px rgba(27,31,35,.075);
-        color: #24292e;
-        line-height: 20px;
-        min-height: 20px;
-        outline: none;
-        padding: 6px 8px;
-        vertical-align: middle;
+    #login-field, #password-field{
+        width: 95%;
+        margin-bottom: 40px;
     }
-    
+    .button-pr-come{
+        display: block;
+        text-align: center;
+        width: 100%;
+        background-color: #FFA011;
+        background-image: linear-gradient(-180deg,#FFCB7C,#FFA011 90%);
+        color: #fff;
+        border: 1px solid rgba(27,31,35,.2);
+        border-radius: .25em;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+        padding: 6px 12px;
+        position: relative;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
     .error {
         text-align: left;
         color: #FF7373;

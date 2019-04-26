@@ -18,7 +18,7 @@
                     {
                         id: 0,
                         text: 'Задачи',
-                        page:'/Problem'
+                        page:'/problem_search'
                     },
                     {
                         id: 1,

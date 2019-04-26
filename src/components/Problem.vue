@@ -344,10 +344,10 @@
         height: 50px;
 
     }
-    td:nth-child(1){
+    .table1 td:nth-child(1), .table2 td:nth-child(1){
         min-width: 200px;
     }
-    td:nth-child(2){
+    .table1 td:nth-child(2), .table2 td:nth-child(2){
         min-width: 300px;
     }
     .quillWrapper {
@@ -474,7 +474,7 @@
         border-radius: 0 0 6px 6px;
         box-shadow: 0 0 10px rgba(0, 0, 0, .05);
     }
-    .stageSelect {
+    .v-select.stageSelect {
         float: right;
         min-width: 250px;
         margin-top: -8px;

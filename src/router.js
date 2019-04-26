@@ -28,7 +28,7 @@ let router = new Router({
       component: ProblemSearch
     },
     {
-      path: 'problem',
+      path: '/problem',
       name: 'problem',
       component: Problem
     }

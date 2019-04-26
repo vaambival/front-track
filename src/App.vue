@@ -22,18 +22,18 @@
 </script>
 
 <style lang="scss">
-  body{
-    background-color: #f9f9f9;
-      margin: 0;
-  }
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #2c3e50;
-}
-  .button-pr{
+    body{
+        background-color: #f9f9f9;
+        margin: 0;
+    }
+    #app {
+      font-family: 'Avenir', Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-align: left;
+      color: #2c3e50;
+    }
+    .button-pr{
       display: block;
       text-align: center;
       width: 100%;
@@ -49,16 +49,30 @@
       position: relative;
       vertical-align: middle;
       white-space: nowrap;
-  }
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
     }
-  }
+    input{
+        display: block;
+        background-color: #FFF;
+        font-size: 14px;
+        border: 1px solid #d1d5da;
+        border-radius: 3px;
+        box-shadow: inset 0 1px 2px rgba(27,31,35,.075);
+        color: #24292e;
+        line-height: 20px;
+        min-height: 20px;
+        outline: none;
+        padding: 6px 8px;
+        vertical-align: middle;
+    }
+    #nav {
+      padding: 30px;
+      a {
+        font-weight: bold;
+        color: #2c3e50;
+        &.router-link-exact-active {
+          color: #42b983;
+        }
+    }
 }
 </style>
 
