@@ -7,6 +7,7 @@
 
 <script>
     import Nav from './components/Nav'
+
     export default {
         name: 'app',
         components: {
@@ -29,9 +30,26 @@
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  text-align: left;
   color: #2c3e50;
 }
+  .button-pr{
+      display: block;
+      text-align: center;
+      width: 100%;
+      background-color: #FFA011;
+      background-image: linear-gradient(-180deg,#FFCB7C,#FFA011 90%);
+      color: #fff;
+      border: 1px solid rgba(27,31,35,.2);
+      border-radius: .25em;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      padding: 6px 12px;
+      position: relative;
+      vertical-align: middle;
+      white-space: nowrap;
+  }
 #nav {
   padding: 30px;
   a {
