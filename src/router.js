@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import Problem from '@/components/Problem'
+import ProblemSearch from "@/components/ProblemSearch";
 
 
 
@@ -22,7 +23,12 @@ let router = new Router({
       component: Login
     },
     {
-      path: '/problem',
+      path: '/problem_search',
+      name: 'problemSearch',
+      component: ProblemSearch
+    },
+    {
+      path: 'problem',
       name: 'problem',
       component: Problem
     }

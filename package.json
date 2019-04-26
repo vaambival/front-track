@@ -13,7 +13,8 @@
     "vue": "^2.6.6",
     "vue-cookies": "^1.5.13",
     "vue-router": "^3.0.1",
-    "vue-select": "^2.6.4"
+    "vue-select": "^2.6.4",
+    "vuejs-datepicker": "^1.5.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.0",
