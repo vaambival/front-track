@@ -1,11 +1,11 @@
 <template>
     <div id="problem-search">
         <div class="search-bar">
-            <table class="search-fields">
+            <table class="search-fields" v-on:click="activeClear">
                     <tr>
                         <td>
                             <p>Название</p>
-                            <input type="text" class=""/>
+                            <input type="text" class="" v-model="nameProblem"/>
                         </td>
                         <td>
                             <p>Автор</p>
@@ -26,8 +26,10 @@
                     <tr>
                         <td>
                             <p>Дата создания</p>
-                            <datepicker input-class="date-picker" :language="options.language" placeholder="От" class="dt_from"/>
-                            <datepicker input-class="date-picker" :language="options.language" placeholder="До" class="dt_to"/>
+                            <datepicker input-class="date-picker" :language="options.language" placeholder="От"
+                                        class="dt_from" v-model="from" :format="customFormatter"/>
+                            <datepicker input-class="date-picker" :language="options.language" placeholder="До"
+                                        class="dt_to" v-model="to" :format="customFormatter"/>
                         </td>
                         <td>
                             <p>Статус</p>
@@ -41,12 +43,25 @@
                         </td>
                     </tr>
                 </table>
+
+            <div>
+                <button class="button-pr search" v-on:click="searchPromlemsByParams">
+                    Поиск
+                </button>
+                <button class="button-pr cancel" :class="active" v-on:click="clearParams">
+                    Очистить
+                </button>
+                <!--<button class="button-pr cancel" v-on:click="test">
+                    test
+                </button>-->
+            </div>
         </div>
 
         <div class="problems">
             <table class="listProblems">
                 <thead>
                     <tr>
+                        <th>Номер</th>
                         <th>Название</th>
                         <th>Автор</th>
                         <th>Исполнитель</th>
@@ -58,13 +73,16 @@
                 </thead>
                 <tbody>
                     <tr v-for="lp in listProblem">
-                        <td class="ta-left">{{ lp.name }}</td>
+                        <td><router-link :to="`/problem/${lp.id}`">pop-{{ lp.id }}</router-link></td>
+                        <td class="ta-left">
+                            <router-link :to="`/problem/${lp.id}`">{{ lp.name }}</router-link>
+                        </td>
                         <td>{{ lp.author == null ? null : lp.author.userName }}</td>
                         <td>{{ lp.executor == null ? null : lp.executor.userName }}</td>
                         <td>{{ lp.sourceType }}</td>
                         <td>{{ lp.createdDate }}</td>
-                        <td>{{ lp.status }}</td>
-                        <td>{{ lp.stage }}</td>
+                        <td>{{ getStatusName(lp.status) }}</td>
+                        <td>{{ getStageName(lp.stage) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -75,7 +93,8 @@
 <script>
     import Datepicker from 'vuejs-datepicker'
     import ru from 'vuejs-datepicker/src/locale/translations/ru'
-    import {axiosConfig} from "../common/axios_common";
+    import {axiosConfig} from "../common/axios_common"
+    import moment from 'moment'
 
     import {
         PROBLEM_URL_WITHOUT_PREFIX,
@@ -93,25 +112,28 @@
                 options: {
                     language: ru
                 },
+                nameProblem: "",
                 author: {
                     options: [
                         { authorCode: "", authorName: "" }
                     ],
-                    default: ""
+                    default: null
                 },
                 executor: {
                     options: [
                         { executorCode: "", executorName: "" }
                     ],
-                    default: ""
+                    default: null
                 },
+                from: null,
+                to: null,
                 status: {
                     options: [
                         {statusCode: "CRITIQUE", statusName: "Критика"},
                         {statusCode: "MENTION", statusName: "Упоминание"},
                         {statusCode: "PRAISE", statusName: "Хвала"}
                     ],
-                    default: ""
+                    default: null
                 },
                 stage: {
                     options: [
@@ -120,17 +142,18 @@
                         {stageCode: "ON_ACCEPTANCE", stageName: "На приемке"},
                         {stageCode: "COMPLETED", stageName: "Завершена"}
                     ],
-                    default: ""
+                    default: null
                 },
                 sourceType: {
                     options: [
-                        {sourceTypeCode: "vk", sourceTypeName: "VKontakte"},
-                        {sourceTypeCode: "tw", sourceTypeName: "twitter"},
+                        {sourceTypeCode: "VK", sourceTypeName: "VKontakte"},
+                        {sourceTypeCode: "TWITTER", sourceTypeName: "twitter"},
                         {sourceTypeCode: "i", sourceTypeName: "instagram"},
                     ],
-                    default: ""
+                    default: null
                 },
-                listProblem: []
+                listProblem: [],
+                active: ""
             }
         },
         mounted() {
@@ -144,21 +167,92 @@
                             this.author.options[ex].authorName = response.data[ex].userName
                         }
                         this.executor.options.push({ executorCode: 0, executorName: "Не назначено"})
-                        this.executor.default = { executorCode: 0, executorName: "Не назначено"}
-
-                        //this.author.options.push({ authorCode: 0, authorName: "Не назначено"})
-                        //this.author.default = { authorCode: 0, authorName: "Не назначено"}
                     }),
                 this.$http.get(PROBLEM_URL_WITHOUT_PREFIX, axiosConfig)
                     .then(response => {
                         this.listProblem = response.data
-                        console.log(response.data)
                     })
+        },
+        methods: {
+            customFormatter(date) {
+                return moment(date).format('DD.MM.YYYY');
+            },
+
+            searchPromlemsByParams(){
+                console.log(this.from)
+                this.$http.get(PROBLEM_URL_WITHOUT_PREFIX + '?' + (this.nameProblem == "" ? "" : ('name='+this.nameProblem))
+                    + (this.author.default == null ? "" : ('&authorId=' + this.author.default.authorCode))
+                    + (this.executor.default == null ? "" : ('&executorId=' + this.executor.default.executorCode))
+                    + (this.sourceType.default == null ? "" : ('&sourceType=' + this.sourceType.default.sourceTypeCode))
+                    + (this.status.default == null ? "" : ('&status=' + this.status.default.statusCode))
+                    + (this.stage.default == null ? "" : ('&stage=' + this.stage.default.stageCode))
+                    + (this.from == null ? "" : ('&after=' + moment(this.from).format('DD.MM.YYYY')))
+                    + (this.to == null ? "" : ('&before=' + moment(this.to).format('DD.MM.YYYY'))),
+                    axiosConfig)
+                    .then(response => {
+                        this.listProblem = response.data
+                    })
+            },
+
+            clearParams(){
+                this.active = ''
+                this.nameProblem = ""
+                this.author.default = null
+                this.executor.default = null
+                this.from = null
+                this.to = null
+                this.status.default = null
+                this.stage.default = null
+                this.sourceType.default = null
+                this.$http.get(PROBLEM_URL_WITHOUT_PREFIX, axiosConfig)
+                    .then(response => {
+                        this.listProblem = response.data
+                    })
+            },
+
+            test() {
+                this.$http.post(PROBLEM_URL_WITHOUT_PREFIX, {
+                    prefix: "pop",
+                    name: "Simply set moment as the filtering function and you're good to go. At least one argument is expecte",
+                    createdDate: "2010-10-31T01:30:00.000",
+                    authorId: 101,
+                    status: "MENTION",
+                    executorId: 101,
+                    requestId: 1,
+                    description: "Simply set moment as the filtering function and you're good to go. At least one argument is expected, which the filter assumes to be a format string if the argument doesn't match any of the other filtering methods."}, axiosConfig)
+                    .then(response => {
+                       // this.listProblem = response.data
+                    })
+            },
+
+            getStatusName(statusValue) {
+                for (var option in this.status.options) {
+                    if (statusValue === this.status.options[option].statusCode) {
+                        return this.status.options[option].statusName
+                    }
+                }
+            },
+
+            getStageName(stageValue) {
+                for (var option in this.stage.options) {
+                    if (stageValue === this.stage.options[option].stageCode) {
+                        return this.stage.options[option].stageName
+                    }
+                }
+            },
+
+            activeClear() {
+                this.active = 'active'
+            }
         }
     }
 </script>
 
 <style>
+    .active {
+        background-image: linear-gradient(-180deg,#FFB2B2,#FF7373 90%);
+        background-color: #FF7373;
+    }
     .v-select{
         background-color: #fff;
     }
@@ -170,6 +264,11 @@
     }
     .listProblems{
         margin-top: 50px;
+        margin-bottom: 100px;
+    }
+    .listProblems td:nth-child(2) {
+        width: 20%;
+        word-break: break-word;
     }
     .listProblems th{
         background-color: #FFA011;
@@ -185,6 +284,10 @@
     }
     .listProblems td{
         text-align: center;
+    }
+    .listProblems td a{
+        color: #2c3e50;
+        text-decoration: none;
     }
     .search-fields td{
         text-align: left;
@@ -223,5 +326,9 @@
     }
     .dt_from, .dt_to {
         width: 49%;
+    }
+    .search {
+        background-image: linear-gradient(-180deg, #97B9E9, #4C85D3 90%);
+        border-color: #4C85D3;
     }
 </style>

@@ -49,6 +49,7 @@
       position: relative;
       vertical-align: middle;
       white-space: nowrap;
+      outline: none;
     }
     input{
         display: block;

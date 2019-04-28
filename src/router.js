@@ -5,8 +5,6 @@ import Login from '@/components/Login'
 import Problem from '@/components/Problem'
 import ProblemSearch from "@/components/ProblemSearch";
 
-
-
 Vue.use(Router)
 
 let router = new Router({
