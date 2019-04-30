@@ -4,16 +4,24 @@
             <router-link class="spacing" v-for="routes in links"
                          v-bind:key="routes.id"
                          :to="`${routes.page}`">{{routes.text}}</router-link>
-                <input class="find-prodlem-input" type="text" value="">
+                <input class="find-prodlem-input" type="text" v-model="problemId"
+                       placeholder="Номер задачи" v-on:keyup.enter="searchProblemById">
         </nav>
     </div>
 </template>
 
 <script>
+    import {axiosConfig} from "../common/axios_common"
+    import {
+        PROBLEM_URL
+    } from "@/constant/api";
+
     export default {
         name: 'Nav',
         data() {
             return {
+                problemId: null,
+                act_class: "",
                 links: [
                     {
                         id: 0,
@@ -26,6 +34,14 @@
                         page:'/Request'
                     }
                 ]
+            }
+        },
+        methods: {
+            searchProblemById() {
+                this.$http.get(PROBLEM_URL + '/' + this.problemId, axiosConfig)
+                    .then(response => {
+                        this.$router.push('/problem/'+this.problemId)
+                    })
             }
         }
     }
@@ -52,5 +68,8 @@
     }
     .find-prodlem-input {
         float: right;
+        margin-top: 6px;
+        margin-right: 40px;
+        min-width: 268px;
     }
 </style>

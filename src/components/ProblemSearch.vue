@@ -19,7 +19,7 @@
                         </td>
                         <td>
                             <p>Тип источника</p>
-                            <v-select :reduce="st => st.sourceTypeName" label="sourceTypeName" :options="sourceType.options"
+                            <v-select multiple :reduce="st => st.sourceTypeName" label="sourceTypeName" :options="sourceType.options"
                                       v-model="sourceType.default"/>
                         </td>
                     </tr>
@@ -33,12 +33,12 @@
                         </td>
                         <td>
                             <p>Статус</p>
-                            <v-select :reduce="st => st.statusCode" label="statusName" :options="status.options"
+                            <v-select multiple :reduce="st => st.statusCode" label="statusName" :options="status.options"
                                       v-model="status.default"/>
                         </td>
                         <td>
                             <p>Этап</p>
-                            <v-select :reduce="st => st.stageName" label="stageName" :options="stage.options"
+                            <v-select multiple :reduce="st => st.stageName" label="stageName" :options="stage.options"
                                       v-model="stage.default"/>
                         </td>
                     </tr>
@@ -51,9 +51,9 @@
                 <button class="button-pr cancel" :class="active" v-on:click="clearParams">
                     Очистить
                 </button>
-                <!--<button class="button-pr cancel" v-on:click="test">
+                <button class="button-pr cancel" v-on:click="test">
                     test
-                </button>-->
+                </button>
             </div>
         </div>
 
@@ -179,13 +179,13 @@
             },
 
             searchPromlemsByParams(){
-                console.log(this.from)
+                console.log(this.sourceType.default.map(u => u.sourceTypeCode).join(','))
                 this.$http.get(PROBLEM_URL_WITHOUT_PREFIX + '?' + (this.nameProblem == "" ? "" : ('name='+this.nameProblem))
                     + (this.author.default == null ? "" : ('&authorId=' + this.author.default.authorCode))
                     + (this.executor.default == null ? "" : ('&executorId=' + this.executor.default.executorCode))
-                    + (this.sourceType.default == null ? "" : ('&sourceType=' + this.sourceType.default.sourceTypeCode))
-                    + (this.status.default == null ? "" : ('&status=' + this.status.default.statusCode))
-                    + (this.stage.default == null ? "" : ('&stage=' + this.stage.default.stageCode))
+                    + (this.sourceType.default == null ? "" : ('&sourceType=' + this.sourceType.default.map(u => u.sourceTypeCode).join(',')))
+                    + (this.status.default == null ? "" : ('&status=' + this.status.default.map(u => u.statusCode).join(',')))
+                    + (this.stage.default == null ? "" : ('&stage=' + this.stage.default.map(u => u.stageCode).join(',')))
                     + (this.from == null ? "" : ('&after=' + moment(this.from).format('DD.MM.YYYY')))
                     + (this.to == null ? "" : ('&before=' + moment(this.to).format('DD.MM.YYYY'))),
                     axiosConfig)
@@ -213,12 +213,12 @@
             test() {
                 this.$http.post(PROBLEM_URL_WITHOUT_PREFIX, {
                     prefix: "pop",
-                    name: "Simply set moment as the filtering function and you're good to go. At least one argument is expecte",
+                    name: "Simply",
                     createdDate: "2010-10-31T01:30:00.000",
                     authorId: 101,
                     status: "MENTION",
                     executorId: 101,
-                    requestId: 1,
+                    requestId: 3,
                     description: "Simply set moment as the filtering function and you're good to go. At least one argument is expected, which the filter assumes to be a format string if the argument doesn't match any of the other filtering methods."}, axiosConfig)
                     .then(response => {
                        // this.listProblem = response.data
@@ -288,6 +288,9 @@
     .listProblems td a{
         color: #2c3e50;
         text-decoration: none;
+    }
+    .listProblems tr:hover{
+        background-color: #97B9E9;
     }
     .search-fields td{
         text-align: left;

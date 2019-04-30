@@ -23,10 +23,10 @@ let router = new Router({
     {
       path: '/problem_search',
       name: 'problemSearch',
-      component: ProblemSearch
+      component: ProblemSearch,
     },
     {
-      path: '/problem',
+      path: '/problem/:id',
       name: 'problem',
       component: Problem
     }

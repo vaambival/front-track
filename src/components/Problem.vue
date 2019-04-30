@@ -39,8 +39,7 @@
                 <tr>
                     <td>Ссылка</td>
                     <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0;">
-                        <a href="https://forum.vuejs.org/t/how-do-i-make-an-html-tag-inside-a-data-string-render-as-an-html-tag/13074/4">
-                            https://forum.vuejs.org/t/how-do-i-make-an-html-tag-inside-a-data-string-render-as-an-html-tag/13074/4</a>
+                        <a :href="link">{{ link }}</a>
                     </td>
                 </tr>
             </table>
@@ -151,6 +150,7 @@
                     ],
                     default: ""
                 },
+                link: null,
                 description: "",
                 tempDescription: "",
                 displayEditor: false,
@@ -169,14 +169,17 @@
                     ],
                     default: ""
                 },
+                problemId: this.$router.currentRoute.params.id
             }
         },
         mounted() {
-            this.$http.get(PROBLEM_URL + '/1', axiosConfig)
+            this.$http.get(PROBLEM_URL + '/' + this.problemId, axiosConfig)
                 .then(response => {
+                    console.log(this.$router)
                     this.prefix = response.data.prefix
                     this.id = response.data.id
                     this.name = response.data.name
+                    this.link = response.data.requestDto.link
                     this.sourceType = response.data.sourceType
                     this.status.default = this.getStatusName(response.data.status)
                     this.stage.default = this.getStageName(response.data.stage)
@@ -194,7 +197,6 @@
                     this.comment = response.data.comments
 
                     this.historyDtos = response.data.historyDtos
-
                 }),
                 this.$http.get(USER_URL, axiosConfig)
                     .then(response => {
@@ -225,7 +227,7 @@
 
             updateStatus() {
                 if (this.status.default.statusCode != null) {
-                    this.$http.patch(PROBLEM_URL + '/1', {
+                    this.$http.patch(PROBLEM_URL + '/' + this.problemId, {
                         status: this.status.default.statusCode
                     }, axiosConfig)
                         .then(response => {
@@ -236,7 +238,7 @@
 
             updateStage() {
                 if (this.stage.default.stageCode != null) {
-                    this.$http.patch(PROBLEM_URL + '/1', {
+                    this.$http.patch(PROBLEM_URL + '/' + this.problemId, {
                         stage: this.stage.default.stageCode
                     }, axiosConfig)
                         .then(response => {
@@ -249,7 +251,7 @@
             updateExecutor() {
                 if (this.executor.default.executorCode != null) {
                     console.log(this.executor.default.executorCode)
-                    this.$http.patch(PROBLEM_URL + '/1', {
+                    this.$http.patch(PROBLEM_URL + '/' + this.problemId, {
                         userId: this.executor.default.executorCode
                     }, axiosConfig)
                         .then(response => {
@@ -267,7 +269,7 @@
 
             saveClick(){
                 var discriptionHtml = new DOMParser().parseFromString(this.description, 'text/html');
-                this.$http.patch(PROBLEM_URL + '/1', {
+                this.$http.patch(PROBLEM_URL + '/' + this.problemId, {
                     description: discriptionHtml.body.textContent
                 }, axiosConfig)
                     .then(response => {
@@ -299,7 +301,7 @@
 
             saveCommentClick(){
                 var commentHtml = new DOMParser().parseFromString(this.newComment, 'text/html');
-                this.$http.post(PROBLEM_URL + '/1/comment', {
+                this.$http.post(PROBLEM_URL + '/' + this.problemId + '/comment', {
                     text: commentHtml.body.textContent
                 }, axiosConfig)
                     .then(response => {
@@ -314,7 +316,7 @@
                 this.displayCommentEditor = false
                 this.newComment = this.constNewComment
             }
-        }
+        },
     }
 </script>
 
