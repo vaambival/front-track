@@ -175,7 +175,6 @@
         mounted() {
             this.$http.get(PROBLEM_URL + '/' + this.problemId, axiosConfig)
                 .then(response => {
-                    console.log(this.$router)
                     this.prefix = response.data.prefix
                     this.id = response.data.id
                     this.name = response.data.name
@@ -321,6 +320,9 @@
 </script>
 
 <style>
+   /* nav a.spacing:nth-child(1){
+        background-color: #FFA011;
+    }*/
     .arrow:before{
         content: '\2192';
     }

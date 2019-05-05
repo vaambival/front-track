@@ -4,6 +4,7 @@
             <router-link class="spacing" v-for="routes in links"
                          v-bind:key="routes.id"
                          :to="`${routes.page}`">{{routes.text}}</router-link>
+
                 <input class="find-prodlem-input" type="text" v-model="problemId"
                        placeholder="Номер задачи" v-on:keyup.enter="searchProblemById">
         </nav>
@@ -21,7 +22,6 @@
         data() {
             return {
                 problemId: null,
-                act_class: "",
                 links: [
                     {
                         id: 0,
@@ -31,7 +31,7 @@
                     {
                         id: 1,
                         text: 'Заявки',
-                        page:'/Request'
+                        page:'/request_search'
                     }
                 ]
             }
