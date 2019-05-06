@@ -1,7 +1,10 @@
 <template>
     <div>
         <p class="name_problem">
-            {{ prefix}} - {{ id }} {{ name }}
+            <span class="fullNameProblem" v-on:click="changeName">{{ prefix}} - {{ id }} <span v-show="!isChangeNameProblem">{{ name }}</span>
+                <input autofocus ref="newNameProblem1" class="newName" v-model="name" v-show="isChangeNameProblem"
+                       v-on:blur="saveNewNameProblem" v-on:keyup.enter="saveNewNameProblem" v-focus="isChangeNameProblem">
+            </span>
             <v-select :reduce="st => st.stageName" label="stageName" :options="stage.options" class="stageSelect"
                       v-model="stage.default" v-on:change="updateStage"/>
         </p>
@@ -127,6 +130,13 @@
         components: {
             VueEditor
         },
+        directives: {
+            focus: {
+                inserted: function (el) {
+                    el.focus()
+                }
+            }
+        },
         data() {
             return {
                 constNewComment: "Добавить комментарий...",
@@ -169,7 +179,8 @@
                     ],
                     default: ""
                 },
-                problemId: this.$router.currentRoute.params.id
+                problemId: this.$router.currentRoute.params.id,
+                isChangeNameProblem: false
             }
         },
         mounted() {
@@ -209,6 +220,23 @@
                 })
         },
         methods: {
+            changeName() {
+                this.isChangeNameProblem = true
+                this.$refs.newNameProblem1.focus()
+            },
+
+            saveNewNameProblem(){
+                this.isChangeNameProblem = false
+                if (this.name != null) {
+                    this.$http.patch(PROBLEM_URL + '/' + this.problemId, {
+                        name: this.name
+                    }, axiosConfig)
+                        .then(response => {
+
+                        })
+                }
+            },
+
             getStatusName(statusValue) {
                 for (var option in this.status.options) {
                     if (statusValue === this.status.options[option].statusCode) {
@@ -328,11 +356,13 @@
         content: '\2192';
     }
     .name_problem {
-        display: block;
+        display: table;
+        width: 94%;
         text-align: left;
         margin: 20px 30px 40px;
         border-top: 2px solid #ccc;
         padding: 15px;
+        height: 38px;
         background-color: rgba(106,166,223,0.1);
     }
     table {
@@ -482,7 +512,15 @@
     .v-select.stageSelect {
         float: right;
         min-width: 250px;
-        margin-top: -8px;
         background-color: #FFF0D7;
+    }
+    .newName {
+        display: inline-block;
+        width: 70%;
+    }
+    .name_problem .fullNameProblem {
+        display:table-cell;
+        vertical-align:middle;
+        font-weight: 600;
     }
 </style>

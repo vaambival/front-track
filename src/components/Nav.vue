@@ -80,16 +80,10 @@
         text-decoration: none;
         display: inline-block;
     }
-    /*nav a:hover {
-        background-color: #111;
-    }*/
-    /*nav a.router-link-active {
-        background-color: #FFA011;
-    }*/
     .find-prodlem-input {
         float: right;
         margin-top: 6px;
-        margin-right: 40px;
+        margin-right: 30px;
         min-width: 268px;
     }
 </style>
