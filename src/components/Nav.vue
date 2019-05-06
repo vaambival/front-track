@@ -1,9 +1,12 @@
 <template>
     <div>
         <nav v-if="this.$route.path !== '/login'">
-            <router-link class="spacing" v-for="routes in links"
+            <router-link class="spacing"
+                         v-for="routes in links"
+                         v-bind:class="{navActive: setActiveMenu(routes.page)}"
                          v-bind:key="routes.id"
-                         :to="`${routes.page}`">{{routes.text}}</router-link>
+                         :to="`${routes.page}`">{{routes.text}}
+            </router-link>
 
                 <input class="find-prodlem-input" type="text" v-model="problemId"
                        placeholder="Номер задачи" v-on:keyup.enter="searchProblemById">
@@ -21,6 +24,7 @@
         name: 'Nav',
         data() {
             return {
+                navActive: null,
                 problemId: null,
                 links: [
                     {
@@ -37,10 +41,23 @@
             }
         },
         methods: {
+            setActiveMenu(pathPage) {
+                if (this.$route.path == pathPage)
+                    return true
+                else {
+                    console.log(this.$route)
+                    if (this.$route.name == 'problem' && pathPage == '/problem_search')
+                        return  true
+                    else
+                        return false
+                }
+            },
+
             searchProblemById() {
                 this.$http.get(PROBLEM_URL + '/' + this.problemId, axiosConfig)
                     .then(response => {
                         this.$router.push('/problem/'+this.problemId)
+                        this.problemId = null
                     })
             }
         }
@@ -48,6 +65,9 @@
 </script>
 
 <style>
+    .navActive {
+        background-color: #FFA011;
+    }
     .spacing {
         color: #fff;
     }
@@ -60,12 +80,12 @@
         text-decoration: none;
         display: inline-block;
     }
-    nav a:hover {
+    /*nav a:hover {
         background-color: #111;
-    }
-    nav a.router-link-active {
+    }*/
+    /*nav a.router-link-active {
         background-color: #FFA011;
-    }
+    }*/
     .find-prodlem-input {
         float: right;
         margin-top: 6px;

@@ -173,6 +173,7 @@
             }
         },
         mounted() {
+            this.navActive = ""
             this.$http.get(PROBLEM_URL + '/' + this.problemId, axiosConfig)
                 .then(response => {
                     this.prefix = response.data.prefix
@@ -320,7 +321,7 @@
 </script>
 
 <style>
-   /* nav a.spacing:nth-child(1){
+    /*nav a.spacing:nth-child(1){
         background-color: #FFA011;
     }*/
     .arrow:before{
