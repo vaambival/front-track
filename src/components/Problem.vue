@@ -41,7 +41,7 @@
                 </tr>
                 <tr>
                     <td>Ссылка</td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0;">
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; ">
                         <a :href="link">{{ link }}</a>
                     </td>
                 </tr>

@@ -39,6 +39,7 @@
             <table class="listRequests">
                 <thead>
                 <tr>
+                    <th>Название</th>
                     <th>Тип источника</th>
                     <th>Статус</th>
                     <th>Количество лайков</th>
@@ -48,6 +49,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="lr in listRequests">
+                        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; min-width: 250px">{{ lr.description }}</td>
                         <td>{{ lr.source}}</td>
                         <td>{{ getStatusName(lr.status) }}</td>
                         <td>{{ lr.likeCount }}</td>
