@@ -12,6 +12,7 @@
     "@crow1796/vue-bulma-tabs": "^1.0.8",
     "axios": "^0.18.0",
     "core-js": "^2.6.5",
+    "express": "^4.17.1",
     "vue": "^2.6.6",
     "vue-cookies": "^1.5.13",
     "vue-html-editor": "^0.2.1",
